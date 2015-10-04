@@ -23,13 +23,15 @@ function makeDimGroup(cf, scale){
 makeDimGroup(crossfilter(demo_data[0]), d3.extent(demo_data[0], function(d){return d[0];}));
 
 chart
-    .height(200)
+    // .height(200)
     .brushOn(false)
     .valueAccessor(function(d){return d.value.sum;})
     .elasticY(true)
-    .transitionDuration(0);
+    .transitionDuration(0)
+    .margins({top: 5, right: 30, bottom: 50, left: 30})
+    .renderHorizontalGridLines(true)
+    .renderVerticalGridLines(true);
 
-chart.margins().right = 5;
 chart.render();
 
 var threshold_input = document.getElementById('threshold');
@@ -46,14 +48,19 @@ demo_selector.addEventListener('change', function(ev){
     chart.group(group).dimension(dimension);
     threshold_input.value = '1000';
     threshold_value.innerHTML = '1000';
-    total_count.innerHTML = extent[1];
+    total_count.innerHTML = demo_data[demo].length;
+    var trans = chart.transitionDuration();
+    chart.transitionDuration(375);
     chart.redraw();
+    chart.transitionDuration(trans);
 });
+
+var _redraw = _.debounce(chart.redraw, 50, {leading: true, maxWait: 300});
 
 threshold_input.addEventListener('input', function(ev){
     var threshold = +ev.target.value;
     threshold_value.innerHTML = threshold;
     reducer.threshold(threshold);
 
-    chart.redraw();
+    _redraw();
 });
