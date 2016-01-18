@@ -236,6 +236,15 @@ function accessor_build(obj, p) {
 		return obj;
 	};
 
+	obj.countDistinct = function (value) {
+		if (!arguments.length) return p.countDistinct;
+
+		value = accessorify(value);
+
+		p.countDistinct = value;
+		return obj;
+	}
+
 }
 
 var reductio_accessors = {

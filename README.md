@@ -19,6 +19,7 @@ Reductio is a library for generating Crossfilter reduce functions and applying t
 * [Aggregations](#aggregations)
     * [Standard aggregations](#aggregations-standard-aggregations)
         * [reductio.<b>count</b>()](#aggregations-standard-aggregations-reductio-b-count-b-)
+        * [reductio.<b>countDistinct</b>(<i>value</i>)](#aggregations-standard-aggregations-reductio-b-countdistinct-b-i-value-i-)
         * [reductio.<b>sum</b>(<i>value</i>)](#aggregations-standard-aggregations-reductio-b-sum-b-i-value-i-)
         * [reductio.<b>avg</b>(<i>boolean</i>|<i>value</i>)](#aggregations-standard-aggregations-reductio-b-avg-b-i-boolean-i-i-value-i-)
         * [reductio.<b>min</b>(<i>boolean</i>|<i>value</i>)](#aggregations-standard-aggregations-reductio-b-min-b-i-boolean-i-i-value-i-)
@@ -108,6 +109,24 @@ reducer(group);
 ```
 
 Stored under the 'count' property of groups. The value will be a count of every record that matches the group accessor.
+
+<h3 id="aggregations-standard-aggregations-reductio-b-countdistinct-b-i-value-i-">reductio.<b>countDistinct</b>()</h3>
+Allows counting the number of occurrences of a value accessor. It cannot be used in conjuction with `reductio.count(true)` since they both use the count property.
+
+```js
+reducer = reductio().countDistinct(function(d){return d.foo});
+reducer(group);
+```
+
+It works with average:
+
+```js
+reducer = reductio()
+  .countDistinct(function(d){return d.foo})
+  .sum(function(d){return d.bar})
+  .avg(true);
+reducer(group);
+```
 
 <h3 id="aggregations-standard-aggregations-reductio-b-sum-b-i-value-i-">reductio.<b>sum</b>(<i>value</i>)</h3>
 Works the same was as Crossfilter's standard ```group.reduceSum()```.

@@ -16,6 +16,7 @@ var reductio_nest = require('./nest.js');
 var reductio_alias = require('./alias.js');
 var reductio_alias_prop = require('./aliasProp.js');
 var reductio_data_list = require('./data-list.js');
+var reductio_count_distinct = require('./count-distinct.js');
 
 function build_function(p, f, path) {
 	// We have to build these functions in order. Eventually we can include dependency
@@ -37,6 +38,16 @@ function build_function(p, f, path) {
 		f.reduceInitial = reductio_count.initial(f.reduceInitial, path);
 	}
 
+	if(p.countDistinct) {
+		if (p.count) {
+			console.error("You cannot use both .count() and .countDistinct()");
+		} else {
+			f.reduceAdd = reductio_count_distinct.add(p.countDistinct, f.reduceAdd, path);
+			f.reduceRemove = reductio_count_distinct.remove(p.countDistinct, f.reduceRemove, path);
+			f.reduceInitial = reductio_count_distinct.initial(f.reduceInitial, path);
+		}
+	}
+
 	if(p.sum) {
 		f.reduceAdd = reductio_sum.add(p.sum, f.reduceAdd, path);
 		f.reduceRemove = reductio_sum.remove(p.sum, f.reduceRemove, path);
@@ -44,7 +55,7 @@ function build_function(p, f, path) {
 	}
 
 	if(p.avg) {
-		if(!p.count || !p.sum) {
+		if(!(p.count || p.countDistinct) || !p.sum) {
 			console.error("You must set .count(true) and define a .sum(accessor) to use .avg(true).");
 		} else {
 			f.reduceAdd = reductio_avg.add(p.sum, f.reduceAdd, path);

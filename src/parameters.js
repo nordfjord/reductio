@@ -3,6 +3,7 @@ var reductio_parameters = function() {
 		order: false,
 		avg: false,
 		count: false,
+		countDistinct: false,
 		sum: false,
 		exceptionAccessor: false,
 		exceptionCount: false,
